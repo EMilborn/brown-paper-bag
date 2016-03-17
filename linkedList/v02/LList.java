@@ -8,10 +8,12 @@ public class LList implements List { //your List interface must be in same dir
 
     //instance vars
     private DLLNode _head;
+    private DLLNode _tail;
     private int _size;
 
     // constructor -- initializes instance vars
     public LList( ) {
+	_tail = null;
 	_head = null; //at birth, a list has no elements
 	_size = 0;
     }
@@ -22,6 +24,8 @@ public class LList implements List { //your List interface must be in same dir
 	DLLNode tmp = new DLLNode( newVal, null, _head );
 	if (size > 0)//if size is 0 then _head is null and has no setPrev()
 	    _head.setPrev(tmp);
+	if (size = 0)//if size is 0 then _tail and _head are the same
+	    _tail = tmp;
 	_head = tmp;
 	_size++;
 	return true;
