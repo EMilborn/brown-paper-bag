@@ -38,15 +38,28 @@ public class LList implements List { //your List interface must be in same dir
 	    throw new IndexOutOfBoundsException();
 
 	String retVal;
-	DLLNode tmp = _head; //create alias to head
+	
+	DLLNode tmp;
 
-	//walk to desired node
-	for( int i=0; i < index; i++ )
-	    tmp = tmp.getNext();
+	if (index > _size / 2){
+	    tmp = _tail;
+	    
+	    for(int i = _size - 1; i > index; i--)
+		tmp = tmp.getPrev();
+	    
+	}
+	else {
+	    tmp = _head; //create alias to head
+
+	    //walk to desired node
+	    for( int i=0; i < index; i++ )
+		tmp = tmp.getNext();
+	}
 
 	//check target node's cargo hold
 	retVal = tmp.getCargo();
 	return retVal;
+	
     } 
 
 
