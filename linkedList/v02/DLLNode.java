@@ -1,4 +1,9 @@
 /*****************************************************
+ * Wish for Success - Elias Milborn, Henry Zhang
+ * APCS2 pd09
+ * HW14 -- On the DLL
+ * 2016--03-17 
+ *
  * class DLLNode
  * Implements a node, for use in lists and other container classes.
  * Stores its data as a String
