@@ -31,6 +31,21 @@ public class LList implements List { //your List interface must be in same dir
 	return true;
     } 
 
+    public boolean addEnd( String newVal ) { 
+
+	DLLNode tmp = new DLLNode( newVal, _tail, null );
+
+	if (_size > 0)//if size is 0 then _tail is null and has no setPrev()
+	    _tail.setNext(tmp);
+
+	if (_size == 0)//if size is 0 then _tail and _head are the same
+	    _head = tmp;
+
+	_tail = tmp;
+	_size++;
+	return true;
+    } 
+
 
     public String get( int index ) { 
 
@@ -38,15 +53,28 @@ public class LList implements List { //your List interface must be in same dir
 	    throw new IndexOutOfBoundsException();
 
 	String retVal;
-	DLLNode tmp = _head; //create alias to head
+	
+	DLLNode tmp;
 
-	//walk to desired node
-	for( int i=0; i < index; i++ )
-	    tmp = tmp.getNext();
+	if (index >= _size / 2){
+	    tmp = _tail;
+	    
+	    for(int i = _size - 1; i > index; i--)
+		tmp = tmp.getPrev();
+	    
+	}
+	else {
+	    tmp = _head; //create alias to head
+
+	    //walk to desired node
+	    for( int i=0; i < index; i++ )
+		tmp = tmp.getNext();
+	}
 
 	//check target node's cargo hold
 	retVal = tmp.getCargo();
 	return retVal;
+	
     } 
 
 
@@ -55,18 +83,40 @@ public class LList implements List { //your List interface must be in same dir
 	if ( index < 0 || index >= size() )
 	    throw new IndexOutOfBoundsException();
 
-	DLLNode tmp = _head; //create alias to head
-
-	//walk to desired node
-	for( int i=0; i < index; i++ )
-	    tmp = tmp.getNext();
-
-	//store target node's cargo
-	String oldVal = tmp.getCargo();
+	DLLNode tmp;
 	
-	//modify target node's cargo
-	tmp.setCargo( newVal );
+	String oldVal;
+
+	if ( index < _size / 2){
+	    tmp = _head; //create alias to head
+
+	    //walk to desired node
+	    for( int i=0; i < index; i++ )
+		tmp = tmp.getNext();
 	
+	    
+	    //store target node's cargo
+	    oldVal = tmp.getCargo();
+	
+	    //modify target node's cargo
+	    tmp.setCargo( newVal );
+	}
+	
+	else {
+	    tmp = _tail; //create alias to head
+	    
+	    //walk to desired node
+	    for( int i = _size - 1; i > index; i-- )
+		tmp = tmp.getPrev();
+	    
+	    
+	    //store target node's cargo
+	    oldVal = tmp.getCargo();
+	    
+	    //modify target node's cargo
+	    tmp.setCargo( newVal );
+	}
+	    
 	return oldVal;
     } 
 
@@ -88,32 +138,37 @@ public class LList implements List { //your List interface must be in same dir
 	//if index==0, insert node before head node
 	if ( index == 0 ) {
 	    add( newVal );
-	}
-	else if (index>_size/2){
-	    DLLNode tmp=_tail;
+	    return;}
+	
+	if (index == _size - 1){
+	    addEnd(newVal);
+	    return;}
+
+	DLLNode tmp;
+
+	if (index>_size/2){
+	    tmp=_tail;
 	    for(int i=_size-1; i>index; i--){
 		tmp=tmp.getPrev();
 	    }
-	    newNode.setNext(tmp);
-	    
-	    tmp.getPrev().setNext(newNode);
-	    newNode.setPrev(tmp.getPrev());
-	    tmp.setPrev(newNode);
-	    _size++;
-	    
-	}   
+	    newNode.setPrev(tmp);
+	    newNode.setNext(tmp.getNext());
+	}	    
+
 	else {
-	    DLLNode tmp=_head;
+	    tmp=_head;
 	    for(int i=0; i<index; i++){
-		tmp=tmp.getPrev();
+		tmp=tmp.getNext();
 	    }
 	    newNode.setNext(tmp);
-	    
-	    tmp.getPrev().setNext(newNode);
 	    newNode.setPrev(tmp.getPrev());
-	    tmp.setPrev(newNode);
-	    _size++;
 	}
+
+	tmp.getPrev().setNext(newNode);
+
+	tmp.setPrev(newNode);
+	_size++;
+	
     }
 
 
@@ -135,12 +190,15 @@ public class LList implements List { //your List interface must be in same dir
 	    //remove target node
 	    _head = _head.getNext();	    
 	}
-	else if (index==_size-1){
-	    _tail.getPrev().setNext(null);
-	    _tail.setPrev(null);
+	else if (index == _size-1){
+	    //check target node's cargo hold
+	    retVal = _tail.getCargo();
+	    
+	    //remove target node's cargo
+	    _tail = _tail.getPrev();
 	    
 	}
-	else if(index>_size/2) {
+	else if(index >= _size/2) {
 	    
 	    //walk to node before desired node
 	    DLLNode tmp=_tail;
@@ -153,10 +211,7 @@ public class LList implements List { //your List interface must be in same dir
 	    retVal = tmp.getCargo();
 	    tmp.getPrev().setNext(tmp.getNext());
 	    tmp.getNext().setPrev(tmp.getPrev());
-	    //Do we need this?
-	    tmp.setPrev(null);
-	    tmp.setNext(null);
-	    //remove target node
+	  
 	  
 
 
@@ -164,14 +219,12 @@ public class LList implements List { //your List interface must be in same dir
 	else{
 	    DLLNode tmp=_head;
 	    for(int i=0; i<index; i++){
-		tmp=tmp.getPrev();
+		tmp=tmp.getNext();
 	    }
 	    retVal = tmp.getCargo();
 	    tmp.getPrev().setNext(tmp.getNext());
 	    tmp.getNext().setPrev(tmp.getPrev());
-	    //Do we need this?
-	    tmp.setPrev(null);
-	    tmp.setNext(null);
+	 
 
 	}
 
@@ -184,13 +237,14 @@ public class LList implements List { //your List interface must be in same dir
 
     // override inherited toString
     public String toString() { 
-	String retStr = "HEAD->";
+	String retStr = "NULL<-";
 	DLLNode tmp = _head; //init tr
 	while( tmp != null ) {
-	    retStr += tmp.getCargo() + "->";
+	    retStr += tmp.getCargo() + "<->";
 	    tmp = tmp.getNext();
 	}
-	retStr += "NULL";
+	retStr = retStr.substring(0, retStr.length()-3);
+	retStr += "->NULL";
 	return retStr;
     }
 
@@ -224,8 +278,8 @@ public class LList implements List { //your List interface must be in same dir
 	System.out.println( "...and now 2nd item is: " + james.set(1,"got") );
 	System.out.println( james );
 
-	james.add(0,"whut");
-	System.out.println( "...after add(0,whut): " );
+	james.add(1,"whut");
+	System.out.println( "...after add(1,whut): " );
 	System.out.println( james );
 
 	james.add(4,"phat");
@@ -236,14 +290,20 @@ public class LList implements List { //your List interface must be in same dir
 			    + james.remove( james._size-1) );
 	System.out.println( james );
 
-	System.out.println( "...after remove(0): " + james.remove(0) );
+	System.out.println( "...after remove(3): " + james.remove(3) );
 	System.out.println( james );
 
-	System.out.println( "...after remove(0): " + james.remove(0) );
+	System.out.println( "...after add(3): three" );
+	james.add(3, "three");
 	System.out.println( james );
 
-	System.out.println( "...after remove(0): " + james.remove(0) );
+	System.out.println( "...after add(4): four" );
+	james.add(4, "four");
 	System.out.println( james );
+
+	System.out.println( "...after remove(4): " + james.remove(4) );
+	System.out.println( james );
+
     }//end main
 
 }//end class LList
