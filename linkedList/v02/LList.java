@@ -22,9 +22,9 @@ public class LList implements List { //your List interface must be in same dir
     //--------------v  List interface methods  v--------------
     public boolean add( String newVal ) { 
 	DLLNode tmp = new DLLNode( newVal, null, _head );
-	if (size > 0)//if size is 0 then _head is null and has no setPrev()
+	if (_size > 0)//if size is 0 then _head is null and has no setPrev()
 	    _head.setPrev(tmp);
-	if (size = 0)//if size is 0 then _tail and _head are the same
+	if (_size == 0)//if size is 0 then _tail and _head are the same
 	    _tail = tmp;
 	_head = tmp;
 	_size++;
@@ -206,6 +206,3 @@ public class LList implements List { //your List interface must be in same dir
     }//end main
 
 }//end class LList
-
-
-
