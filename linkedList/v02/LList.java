@@ -38,28 +38,15 @@ public class LList implements List { //your List interface must be in same dir
 	    throw new IndexOutOfBoundsException();
 
 	String retVal;
-	
-	DLLNode tmp;
+	DLLNode tmp = _head; //create alias to head
 
-	if (index >= _size / 2){
-	    tmp = _tail;
-	    
-	    for(int i = _size - 1; i > index; i--)
-		tmp = tmp.getPrev();
-	    
-	}
-	else {
-	    tmp = _head; //create alias to head
-
-	    //walk to desired node
-	    for( int i=0; i < index; i++ )
-		tmp = tmp.getNext();
-	}
+	//walk to desired node
+	for( int i=0; i < index; i++ )
+	    tmp = tmp.getNext();
 
 	//check target node's cargo hold
 	retVal = tmp.getCargo();
 	return retVal;
-	
     } 
 
 
@@ -68,38 +55,18 @@ public class LList implements List { //your List interface must be in same dir
 	if ( index < 0 || index >= size() )
 	    throw new IndexOutOfBoundsException();
 
-	DLLNode tmp;
-	
-	if ( index < size / 2){
-	    tmp = _head; //create alias to head
+	DLLNode tmp = _head; //create alias to head
 
-	    //walk to desired node
-	    for( int i=0; i < index; i++ )
-		tmp = tmp.getNext();
+	//walk to desired node
+	for( int i=0; i < index; i++ )
+	    tmp = tmp.getNext();
+
+	//store target node's cargo
+	String oldVal = tmp.getCargo();
 	
-	    
-	    //store target node's cargo
-	    String oldVal = tmp.getCargo();
+	//modify target node's cargo
+	tmp.setCargo( newVal );
 	
-	    //modify target node's cargo
-	    tmp.setCargo( newVal );
-	}
-	
-	else {
-	    tmp = _tail; //create alias to head
-	    
-	    //walk to desired node
-	    for( int i = _size - 1; i > index; i-- )
-		tmp = tmp.getPrev();
-	    
-	    
-	    //store target node's cargo
-	    String oldVal = tmp.getCargo();
-	    
-	    //modify target node's cargo
-	    tmp.setCargo( newVal );
-	}
-	    
 	return oldVal;
     } 
 
@@ -119,20 +86,32 @@ public class LList implements List { //your List interface must be in same dir
 	DLLNode newNode = new DLLNode( newVal, null, null );
 
 	//if index==0, insert node before head node
-	if ( index == 0 ) 
+	if ( index == 0 ) {
 	    add( newVal );
+	}
+	else if (index>_size/2){
+	    DLLNode tmp=_tail;
+	    for(int i=_size-1; i>index; i--){
+		tmp=tmp.getPrev();
+	    }
+	    newNode.setNext(tmp);
+	    
+	    tmp.getPrev().setNext(newNode);
+	    newNode.setPrev(tmp.getPrev());
+	    tmp.setPrev(newNode);
+	    _size++;
+	    
+	}   
 	else {
-	    DLLNode tmp = _head; //create alias to head
-
-	    //walk to node before desired node
-	    for( int i=0; i < index-1; i++ )
-		tmp = tmp.getNext();
-
-	    //insert new node
-	    newNode.setNext( tmp.getNext() );
-	    tmp.setNext( newNode );
-
-	    //increment size attribute
+	    DLLNode tmp=_head;
+	    for(int i=0; i<index; i++){
+		tmp=tmp.getPrev();
+	    }
+	    newNode.setNext(tmp);
+	    
+	    tmp.getPrev().setNext(newNode);
+	    newNode.setPrev(tmp.getPrev());
+	    tmp.setPrev(newNode);
 	    _size++;
 	}
     }
@@ -140,12 +119,13 @@ public class LList implements List { //your List interface must be in same dir
 
     //remove node at pos index, return its cargo
     public String remove( int index ) {
+        
 
 	if ( index < 0 || index >= size() )
 	    throw new IndexOutOfBoundsException();
 
-	String retVal;
-	DLLNode tmp = _head; //create alias to head
+	String retVal="";
+	//create alias to head
 
 	//if index==0, remove head node
 	if ( index == 0 ) {
@@ -155,16 +135,44 @@ public class LList implements List { //your List interface must be in same dir
 	    //remove target node
 	    _head = _head.getNext();	    
 	}
-	else {
+	else if (index==_size-1){
+	    _tail.getPrev().setNext(null);
+	    _tail.setPrev(null);
+	    
+	}
+	else if(index>_size/2) {
+	    
 	    //walk to node before desired node
-	    for( int i=0; i < index-1; i++ )
-		tmp = tmp.getNext();
+	    DLLNode tmp=_tail;
+	    for(int i=_size-1; i>index; i--){
+		tmp=tmp.getPrev();
+	    }
+	    
 
 	    //check target node's cargo hold
-	    retVal = tmp.getNext().getCargo();
-
+	    retVal = tmp.getCargo();
+	    tmp.getPrev().setNext(tmp.getNext());
+	    tmp.getNext().setPrev(tmp.getPrev());
+	    //Do we need this?
+	    tmp.setPrev(null);
+	    tmp.setNext(null);
 	    //remove target node
-	    tmp.setNext( tmp.getNext().getNext() );
+	  
+
+
+	}
+	else{
+	    DLLNode tmp=_head;
+	    for(int i=0; i<index; i++){
+		tmp=tmp.getPrev();
+	    }
+	    retVal = tmp.getCargo();
+	    tmp.getPrev().setNext(tmp.getNext());
+	    tmp.getNext().setPrev(tmp.getPrev());
+	    //Do we need this?
+	    tmp.setPrev(null);
+	    tmp.setNext(null);
+
 	}
 
 	//decrement size attribute
