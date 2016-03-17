@@ -41,7 +41,7 @@ public class LList implements List { //your List interface must be in same dir
 	
 	DLLNode tmp;
 
-	if (index > _size / 2){
+	if (index >= _size / 2){
 	    tmp = _tail;
 	    
 	    for(int i = _size - 1; i > index; i--)
@@ -68,18 +68,38 @@ public class LList implements List { //your List interface must be in same dir
 	if ( index < 0 || index >= size() )
 	    throw new IndexOutOfBoundsException();
 
-	DLLNode tmp = _head; //create alias to head
-
-	//walk to desired node
-	for( int i=0; i < index; i++ )
-	    tmp = tmp.getNext();
-
-	//store target node's cargo
-	String oldVal = tmp.getCargo();
+	DLLNode tmp;
 	
-	//modify target node's cargo
-	tmp.setCargo( newVal );
+	if ( index < size / 2){
+	    tmp = _head; //create alias to head
+
+	    //walk to desired node
+	    for( int i=0; i < index; i++ )
+		tmp = tmp.getNext();
 	
+	    
+	    //store target node's cargo
+	    String oldVal = tmp.getCargo();
+	
+	    //modify target node's cargo
+	    tmp.setCargo( newVal );
+	}
+	
+	else {
+	    tmp = _tail; //create alias to head
+	    
+	    //walk to desired node
+	    for( int i = _size - 1; i > index; i-- )
+		tmp = tmp.getPrev();
+	    
+	    
+	    //store target node's cargo
+	    String oldVal = tmp.getCargo();
+	    
+	    //modify target node's cargo
+	    tmp.setCargo( newVal );
+	}
+	    
 	return oldVal;
     } 
 
