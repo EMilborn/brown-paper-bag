@@ -1,4 +1,9 @@
 /*****************************************************
+ * Wish for Success - Elias Milborn, Henry Zhang
+ * APCS2 pd09
+ * HW14 -- On the DLL
+ * 2016--03-17
+ *  
  * class LList
  * Implements a linked list of DLLNodes, each containing String data
  * new in v2: add-at-index, remove
